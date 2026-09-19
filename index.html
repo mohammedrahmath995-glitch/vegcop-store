@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VEGCOP — Redefine Street Style</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,Helvetica,sans-serif;
+}
+
+body{
+    background:#080808;
+    color:#fff;
+}
+
+header{
+    position:sticky;
+    top:0;
+    z-index:1000;
+    background:rgba(8,8,8,.95);
+    border-bottom:1px solid #222;
+}
+
+.nav{
+    max-width:1200px;
+    margin:auto;
+    padding:18px 20px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:900;
+    letter-spacing:2px;
+    color:#00f5d4;
+}
+
+.cart-btn{
+    background:#00f5d4;
+    color:#000;
+    border:0;
+    padding:11px 17px;
+    border-radius:25px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.hero{
+    min-height:75vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:50px 20px;
+    background:
+    radial-gradient(circle at center,#123c38 0%,#080808 55%);
+}
+
+.hero h1{
+    font-size:clamp(45px,9vw,95px);
+    line-height:.95;
+    font-weight:900;
+}
+
+.hero h1 span{
+    color:#00f5d4;
+}
+
+.hero p{
+    max-width:600px;
+    margin:25px auto;
+    color:#aaa;
+    font-size:18px;
+}
+
+.shop-btn{
+    display:inline-block;
+    background:#00f5d4;
+    color:#000;
+    padding:15px 28px;
+    border-radius:30px;
+    font-weight:bold;
+    text-decoration:none;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+    padding:50px 20px;
+}
+
+.filters{
+    display:flex;
+    gap:10px;
+    overflow-x:auto;
+    padding-bottom:25px;
+}
+
+.filters button{
+    flex-shrink:0;
+    padding:10px 18px;
+    border-radius:25px;
+    border:1px solid #333;
+    background:#111;
+    color:white;
+    cursor:pointer;
+}
+
+.filters button.active,
+.filters button:hover{
+    background:#00f5d4;
+    color:#000;
+}
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:22px;
+}
+
+.product{
+    background:#111;
+    border:1px solid #222;
+    border-radius:18px;
+    overflow:hidden;
+    transition:.25s;
+}
+
+.product:hover{
+    transform:translateY(-5px);
+    border-color:#00f5d4;
+}
+
+.product img{
+    width:100%;
+    height:300px;
+    object-fit:cover;
+    display:block;
+}
+
+.product-info{
+    padding:18px;
+}
+
+.category{
+    color:#00f5d4;
+    font-size:12px;
+    text-transform:uppercase;
+    letter-spacing:1px;
+}
+
+.product h3{
+    margin:8px 0;
+}
+
+.price{
+    font-size:20px;
+    font-weight:bold;
+}
+
+.add{
+    width:100%;
+    margin-top:15px;
+    padding:12px;
+    border:0;
+    border-radius:10px;
+    background:#00f5d4;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+footer{
+    text-align:center;
+    padding:40px 20px;
+    border-top:1px solid #222;
+    color:#777;
+}
+
+/* CART */
+
+.cart{
+    position:fixed;
+    top:0;
+    right:-420px;
+    width:min(420px,100%);
+    height:100%;
+    background:#111;
+    z-index:2000;
+    transition:.3s;
+    padding:25px;
+    overflow-y:auto;
+    box-shadow:-10px 0 30px #000;
+}
+
+.cart.open{
+    right:0;
+}
+
+.cart-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+}
+
+.close{
+    background:none;
+    border:0;
+    color:#fff;
+    font-size:28px;
+    cursor:pointer;
+}
+
+.cart-item{
+    display:flex;
+    gap:12px;
+    padding:15px 0;
+    border-bottom:1px solid #333;
+}
+
+.cart-item img{
+    width:70px;
+    height:80px;
+    object-fit:cover;
+    border-radius:8px;
+}
+
+.cart-item-info{
+    flex:1;
+}
+
+.remove{
+    background:none;
+    color:#ff5555;
+    border:0;
+    cursor:pointer;
+    margin-top:8px;
+}
+
+.total{
+    font-size:22px;
+    font-weight:bold;
+    margin:25px 0;
+}
+
+.checkout{
+    width:100%;
+    padding:15px;
+    border:0;
+    border-radius:10px;
+    background:#00f5d4;
+    color:#000;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.8);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:3000;
+    padding:20px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(500px,100%);
+    max-height:90vh;
+    overflow-y:auto;
+    background:#111;
+    border:1px solid #333;
+    border-radius:18px;
+    padding:25px;
+}
+
+.modal-box h2{
+    margin-bottom:20px;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    padding:13px;
+    margin:7px 0 15px;
+    background:#080808;
+    color:white;
+    border:1px solid #333;
+    border-radius:8px;
+}
+
+textarea{
+    min-height:90px;
+    resize:vertical;
+}
+
+.submit{
+    width:100%;
+    padding:14px;
+    border:0;
+    border-radius:10px;
+    background:#00f5d4;
+    color:#000;
+    font-weight:bold;
+}
+
+.empty{
+    color:#777;
+    text-align:center;
+    padding:40px 0;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="nav">
+    <div class="logo">VEGCOP</div>
+
+    <button class="cart-btn" onclick="openCart()">
+        🛒 Cart <span id="cartCount">0</span>
+    </button>
+</div>
+</header>
+
+<section class="hero">
+<div>
+    <h1>REDEFINE<br><span>STREET STYLE</span></h1>
+
+    <p>
+        Bold fits. Modern culture. No boring clothes.
+        Discover VEGCOP streetwear.
+    </p>
+
+    <a href="#shop" class="shop-btn">SHOP NOW</a>
+</div>
+</section>
+
+<section class="container" id="shop">
+
+<div class="filters">
+    <button class="active" onclick="filterProducts('All',this)">All Drops</button>
+    <button onclick="filterProducts('Baggy Pants',this)">Baggy Pants</button>
+    <button onclick="filterProducts('Oversized Tees',this)">Oversized Tees</button>
+    <button onclick="filterProducts('Street Shoes',this)">Street Shoes</button>
+    <button onclick="filterProducts('Kurtis',this)">Kurtis</button>
+</div>
+
+<div class="products" id="products"></div>
+
+</section>
+
+<footer>
+    © 2026 VEGCOP. All rights reserved.
+</footer>
+
+<!-- CART -->
+
+<div class="cart" id="cart">
+
+<div class="cart-head">
+    <h2>Your Cart</h2>
+    <button class="close" onclick="closeCart()">×</button>
+</div>
+
+<div id="cartItems"></div>
+
+<div class="total">
+    Total: ₹<span id="cartTotal">0</span>
+</div>
+
+<button class="checkout" onclick="openCheckout()">
+    Checkout
+</button>
+
+</div>
+
+<!-- CHECKOUT -->
+
+<div class="modal" id="checkoutModal">
+
+<div class="modal-box">
+
+<h2>Checkout</h2>
+
+<form onsubmit="placeOrder(event)">
+
+<input id="name" placeholder="Full Name" required>
+
+<input id="phone" placeholder="WhatsApp Number" required>
+
+<input id="email" type="email" placeholder="Email" required>
+
+<textarea id="address" placeholder="Delivery Address" required></textarea>
+
+<select id="payment" required>
+    <option value="">Select Payment Method</option>
+    <option value="COD">Cash on Delivery</option>
+    <option value="UPI">UPI</option>
+</select>
+
+<button class="submit" type="submit">
+    Place Order
+</button>
+
+</form>
+
+<br>
+
+<button class="close" onclick="closeCheckout()">
+    Cancel
+</button>
+
+</div>
+</div>
+
+<script>
+
+const GOOGLE_SHEET_WEBAPP_URL =
+"PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
+
+const products = [
+
+{
+id:1,
+name:"Shadow Baggy Pants",
+category:"Baggy Pants",
+price:1499,
+image:"https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?auto=format&fit=crop&w=700&q=80"
+},
+
+{
+id:2,
+name:"Urban Black Baggy",
+category:"Baggy Pants",
+price:1299,
+image:"https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=700&q=80"
+},
+
+{
+id:3,
+name:"VEGCOP Oversized Black",
+category:"Oversized Tees",
+price:799,
+image:"https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=700&q=80"
+},
+
+{
+id:4,
+name:"Street Graphic Tee",
+category:"Oversized Tees",
+price:899,
+image:"https://images.unsplash.com/photo-1503341504253-dff4815485f1?auto=format&fit=crop&w=700&q=80"
+},
+
+{
+id:5,
+name:"Night Runner",
+category:"Street Shoes",
+price:2199,
+image:"https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=700&q=80"
+},
+
+{
+id:6,
+name:"Urban White Sneakers",
+category:"Street Shoes",
+price:2499,
+image:"https://images.unsplash.com/photo-1549298916-b41d501d3772?auto=format&fit=crop&w=700&q=80"
+},
+
+{
+id:7,
+name:"Modern Black Kurti",
+category:"Kurtis",
+price:999,
+image:"https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=700&q=80"
+},
+
+{
+id:8,
+name:"Street Style Kurti",
+category:"Kurtis",
+price:1199,
+image:"https://images.unsplash.com/photo-1583391733956-6c78276477e2?auto=format&fit=crop&w=700&q=80"
+}
+
+];
+
+let cart = [];
+
+function displayProducts(list){
+
+const container =
+document.getElementById("products");
+
+container.innerHTML = "";
+
+list.forEach(product => {
+
+container.innerHTML += `
+
+<div class="product">
+
+<img src="${product.image}" alt="${product.name}">
+
+<div class="product-info">
+
+<div class="category">
+${product.category}
+</div>
+
+<h3>${product.name}</h3>
+
+<div class="price">
+₹${product.price}
+</div>
+
+<button class="add" onclick="addToCart(${product.id})">
+Add to Cart
+</button>
+
+</div>
+</div>
+
+`;
+
+});
+
+}
+
+function filterProducts(category,button){
+
+document.querySelectorAll(".filters button")
+.forEach(btn => btn.classList.remove("active"));
+
+button.classList.add("active");
+
+if(category === "All"){
+displayProducts(products);
+}else{
+displayProducts(
+products.filter(p => p.category === category)
+);
+}
+
+}
+
+function addToCart(id){
+
+const product =
+products.find(p => p.id === id);
+
+cart.push(product);
+
+updateCart();
+
+openCart();
+
+}
+
+function removeFromCart(index){
+
+cart.splice(index,1);
+
+updateCart();
+
+}
+
+function updateCart(){
+
+document.getElementById("cartCount").textContent =
+cart.length;
+
+const items =
+document.getElementById("cartItems");
+
+if(cart.length === 0){
+
+items.innerHTML =
+`<div class="empty">Your cart is empty.</div>`;
+
+}else{
+
+items.innerHTML = cart.map((item,index) => `
+
+<div class="cart-item">
+
+<img src="${item.image}">
+
+<div class="cart-item-info">
+
+<strong>${item.name}</strong>
+
+<br>
+
+₹${item.price}
+
+<br>
+
+<button class="remove"
+onclick="removeFromCart(${index})">
+Remove
+</button>
+
+</div>
+
+</div>
+
+`).join("");
+
+}
+
+const total =
+cart.reduce((sum,item) => sum + item.price,0);
+
+document.getElementById("cartTotal").textContent =
+total;
+
+}
+
+function openCart(){
+
+document.getElementById("cart")
+.classList.add("open");
+
+}
+
+function closeCart(){
+
+document.getElementById("cart")
+.classList.remove("open");
+
+}
+
+function openCheckout(){
+
+if(cart.length === 0){
+
+alert("Your cart is empty.");
+
+return;
+
+}
+
+document.getElementById("checkoutModal")
+.classList.add("show");
+
+}
+
+function closeCheckout(){
+
+document.getElementById("checkoutModal")
+.classList.remove("show");
+
+}
+
+function placeOrder(event){
+
+event.preventDefault();
+
+const name =
+document.getElementById("name").value;
+
+const phone =
+document.getElementById("phone").value;
+
+const email =
+document.getElementById("email").value;
+
+const address =
+document.getElementById("address").value;
+
+const payment =
+document.getElementById("payment").value;
+
+const total =
+cart.reduce((sum,item) => sum + item.price,0);
+
+const orderId =
+"VEG-" + Math.floor(100000 + Math.random()*900000);
+
+const order = {
+
+orderId:orderId,
+
+name:name,
+
+phone:phone,
+
+email:email,
+
+address:address,
+
+items:cart.map(item => item.name).join(", "),
+
+category:cart.map(item => item.category).join(", "),
+
+quantity:cart.length,
+
+totalAmount:total,
+
+paymentMethod:payment
+
+};
+
+if(
+GOOGLE_SHEET_WEBAPP_URL.includes("PASTE_YOUR")
+){
+
+alert(
+"Order created: " +
+orderId +
+"\n\nGoogle Sheet is not connected yet."
+);
+
+}else{
+
+fetch(GOOGLE_SHEET_WEBAPP_URL,{
+
+method:"POST",
+
+mode:"no-cors",
+
+headers:{
+"Content-Type":
+"text/plain;charset=utf-8"
+},
+
+body:JSON.stringify(order)
+
+})
+.then(() => {
+
+alert(
+"Order placed successfully!\n\nOrder ID: " +
+orderId
+);
+
+})
+.catch(() => {
+
+alert(
+"Order ID: " +
+orderId +
+"\nPlease contact VEGCOP."
+);
+
+});
+
+}
+
+cart = [];
+
+updateCart();
+
+closeCheckout();
+
+closeCart();
+
+document.querySelector("form").reset();
+
+}
+
+displayProducts(products);
+
+updateCart();
+
+</script>
+
+</body>
+  </html>
